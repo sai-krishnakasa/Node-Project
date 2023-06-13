@@ -1,0 +1,37 @@
+<%- include('partials/header') %>
+    <style>
+        .bbody {
+            margin: 0;
+            padding: 0;
+            background-image: url('background-image.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+
+        .ccontainer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #ffffff;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 24px;
+        }
+    </style>
+
+    <body class="bbody">
+        <div class="ccontainer">
+            <h1>Resource Not Found</h1>
+            <p>The requested resource could not be found.</p>
+        </div>
+    </body>
+    <%- include('partials/footer') %>

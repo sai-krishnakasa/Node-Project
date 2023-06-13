@@ -1,0 +1,100 @@
+<%- include('partials/header') %>
+
+    <div class="profile-container">
+
+
+        <% if(user && user.profile_pic ){%>
+            <img style="height: 100px;width: 100px;padding-left:36%;" id="profile_image" src="<%=user.profile_pic%>"
+                alt="Profile Picture">
+            <% } else {%>
+                <img style="padding-left: 36%;" id="profile_image" src="default_profile_pic.jpg" alt="Profile Picture">
+                <% } %>
+
+                    <form id="profile_form" class="profile-form">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" value="<%=user.userName %>">
+                        <div class="name error"></div>
+
+                        <label for="email">Email</label>
+                        <input type="text" id="email" value="<%=user.email %>" required>
+                        <div class="email error"></div>
+
+                        <label for="profile_pic">Profile_pic</label>
+                        <input type="file" id="profile_pic" accept="image/*">
+                        <div class="image error"></div>
+
+                        <label for="mobile_no">Mobile Number</label>
+                        <input type="text" id="mobile_no" value="<%=user.mobile_no %>" required>
+                        <div class="mobile error"></div>
+
+                        <button type="submit">Update</button>
+                    </form>
+    </div>
+
+    <script>
+        const profile_form = document.getElementById('profile_form');
+        const imageInput = document.getElementById('profile_pic');
+        const emailInput = document.getElementById('email');
+        const nameInput = document.getElementById('username');
+        const mobileInput = document.getElementById('mobile_no');
+        const imageError = document.querySelector('.image.error');
+        const nameError = document.querySelector('.name.error');
+        const emailError = document.querySelector('.email.error');
+        const mobileError = document.querySelector('.mobile.error');
+
+        profile_form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            emailError.textContent = '';
+            mobileError.textContent = '';
+            nameError.textContent = '';
+
+            const Formdata = new FormData();
+            Formdata.append('email', emailInput.value);
+            Formdata.append('mobile_no', mobileInput.value);
+            Formdata.append('userName', nameInput.value);
+            Formdata.append('profile_pic', imageInput.files[0]);
+            for (var pair of Formdata.entries()) {
+                //console.log(pair[0] + ':', pair[1]);
+
+            }
+
+            try {
+                const res = await fetch('/profile', {
+                    method: 'PUT',
+                    body: Formdata,
+                });
+                const data = await res.json();
+                //console.log(data);
+                if (data.errors) {
+                    if (data.errors.email) {
+                        emailError.textContent = data.errors.email;
+                        toastr.error(data.errors.email)
+                    }
+                    if (data.errors.mobile_no) {
+                        mobileError.textContent = data.errors.mobile_no;
+                        toastr.error(data.errors.mobile_no)
+                    }
+                    if (data.errors.name) {
+                        nameError.textContent = data.errors.name;
+                        toastr.error(data.errors.name)
+                    }
+                    if (data.errors.profile_pic) {
+                        imageError.textContent = data.errors.profile_pic;
+                        toastr.error(data.errors.profile_pic)
+                    }
+                }
+                if (data.success) {
+                    //console.log("Updation Success");
+                    toastr.success(data.success);
+                    setTimeout(function () {
+                        location.assign('/profile');
+                        resolve();
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>

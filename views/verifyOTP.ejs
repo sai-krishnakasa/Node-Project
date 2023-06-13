@@ -1,0 +1,134 @@
+<%- include('partials/header') %>
+
+    <head>
+        <title>Verify OTP</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f2f2f2;
+            }
+
+            .container {
+                max-width: 400px;
+                margin: 0 auto;
+                padding: 40px;
+                background-color: #fff;
+                border-radius: 4px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .title {
+                text-align: center;
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            .otp-input {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .otp-input input {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                text-align: center;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            .otp-input input:focus {
+                outline: none;
+                border-color: #0066cc;
+            }
+
+            .submit-button {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            .submit-button button {
+                padding: 10px 20px;
+                font-size: 16px;
+                background-color: #0066cc;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .submit-button button:hover {
+                background-color: #0052a3;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="otp error"></div>
+        <form>
+            <div class="container">
+                <h1 class="title">Verify OTP</h1>
+                <div class="otp-input">
+                    <input id="otp-1" type="text" maxlength="1" pattern="\d" inputmode="numeric" required />
+                    <input id="otp-2" type="text" maxlength="1" pattern="\d" inputmode="numeric" required />
+                    <input id="otp-3" type="text" maxlength="1" pattern="\d" inputmode="numeric" required />
+                    <input id="otp-4" type="text" maxlength="1" pattern="\d" inputmode="numeric" required />
+                </div>
+                <div class="submit-button">
+                    <button type="submit">Verify</button>
+                </div>
+            </div>
+        </form>
+        <script>
+
+
+            const form = document.querySelector('form')
+            // Make a fetch API call or AJAX post request to /verifyOTP endpoint here
+            // Example:
+            form.addEventListener('submit', async (e) => {
+                const otp1 = document.getElementById('otp-1').value;
+                const otp2 = document.getElementById('otp-2').value;
+                const otp3 = document.getElementById('otp-3').value;
+                const otp4 = document.getElementById('otp-4').value;
+                const otpError = document.querySelector('.otp.error');
+                //console.log(otp1)
+                const OTP = parseInt(otp1 + otp2 + otp3 + otp4);
+                //console.log('OTP:', OTP);
+                e.preventDefault();
+                otpError.textContent = ''
+                try {
+                    const res = await fetch('/verifyOTP', {
+                        method: 'POST',
+                        body: JSON.stringify({ OTP: OTP }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    const data = await res.json();
+                    //console.log("data")
+                    //console.log(data)
+                    if (data.errors) {
+                        if (data.errors?.otp) {
+                            otpError.textContent = data.errors.otp
+                        }
+                    }
+                    else {
+                        alert("OTP Verification Successful");
+                        location.assign('/resetPassword')
+                    }
+                }
+                catch (e) {
+                    //console.log(e);
+                }
+
+            });
+
+        </script>
+
+    </body>
+
+    </html>
+
+    <%- include('partials/footer') %>

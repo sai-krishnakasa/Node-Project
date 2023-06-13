@@ -1,0 +1,90 @@
+<%- include('partials/header') %>
+    <div class="grid-container">
+        <% if (blogs.length===0) { %>
+            <p class="oops-message">Oops! No blogs found.</p>
+            <% } else { %>
+                <% for (let blog of blogs) { %>
+                    <a style="cursor: pointer;" type="select" href="viewBlog/<%= blog.id %>">
+                        <div class="card">
+                            <h2>
+                                <%= blog.title %>
+                            </h2>
+                            <p>Category: <%= blog.Category?.name %>
+                            </p>
+                            <img src="<%= blog.blog_image %>" alt="Blog Image 1">
+                            <% if (blog.description.length> 200) { %>
+                                <i>
+                                    <%= blog.description.substring(0, 200) + "...." %>
+                                </i>
+                                <% } else { %>
+                                    <i>
+                                        <%= blog.description %>
+                                    </i>
+                                    <% } %>
+                        </div>
+                    </a>
+                    <% } %>
+                        <% } %>
+    </div>
+    <script>
+        let searchInput = document.getElementById("search-input");
+        let searchForm = document.getElementById("search-form");
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const searchValue = searchInput.value;
+            const res = await fetch(`/?search=${searchValue}`, {
+                method: 'GET',
+            });
+            const data = await res.json();
+            const updatedBlogs = data.blogs;
+
+            if (updatedBlogs.length === 0) {
+                const container = document.querySelector('.grid-container');
+                container.innerHTML = '';
+                const oopsMessage = document.createElement('p');
+                oopsMessage.classList.add('oops-message');
+                oopsMessage.textContent = 'Oops! No blogs found.';
+                const image = document.createElement('img');
+                image.src = 'oops.png';
+                image.alt = 'Not FOund ';
+                container.appendChild(oopsMessage);
+                container.appendChild(image);
+            } else {
+                const gridContainer = document.querySelector('.grid-container');
+                gridContainer.innerHTML = ''; // Clear the existing content
+
+                updatedBlogs.forEach((blog) => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+
+                    const title = document.createElement('h2');
+                    title.textContent = blog.title;
+                    card.appendChild(title);
+
+                    const category = document.createElement('p');
+                    category.textContent = 'Category: ' + blog.Category?.name;
+                    card.appendChild(category);
+
+                    const image = document.createElement('img');
+                    image.src = blog.blog_image;
+                    image.alt = 'Blog Image 1';
+                    card.appendChild(image);
+
+                    const description = document.createElement('i');
+                    description.textContent = blog.description.length > 200
+                        ? blog.description.substring(0, 200) + '....'
+                        : blog.description;
+                    card.appendChild(description);
+
+                    const link = document.createElement('a');
+                    link.style.cursor = 'pointer';
+                    link.type = 'select';
+                    link.href = `viewBlog/${blog.id}`;
+                    link.appendChild(card);
+
+                    gridContainer.appendChild(link);
+                });
+            }
+        });
+    </script>
+    <%- include('partials/footer') %>

@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+    <style>
+        #make-inline {
+            display: flex;
+            gap: 130px;
+        }
+
+        .inline-button {
+            margin-right: 10px;
+        }
+    </style>
+    <div class="grid-container">
+        <% for(let blog of blogs){%>
+            <div class="card">
+
+                <h2>
+                    <%= blog.title%>
+                </h2>
+                <p>Category: <%= blog.Category.name %>
+                </p>
+                <img src=<%=blog.blog_image%> alt="Blog Image 1">
+                <% if(blog.description.length> 200){%>
+                    <i>
+                        <%= blog.description.substring(0,200)+"...." %>
+                    </i>
+                    <%}else{%>
+
+                        <i>
+                            <%= blog.description %>
+                        </i>
+                        <% } %>
+                            <div id="make-inline">
+                                <button><a style="cursor: pointer;" href="viewBlog/<%= blog.id%>">View</a></button>
+                                <button><a href="deleteBlog/<%= blog.id%>">Delete</a></button>
+                            </div>
+            </div>
+            </a>
+
+            <%}%>
+    </div>
+
+    <%- include('partials/footer') %>
